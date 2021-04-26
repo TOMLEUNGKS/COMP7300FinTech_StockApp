@@ -77,6 +77,7 @@ st.write('The RSI of the last Trading Day is ' + str(round(last_rsi,2)))
 
 st.line_chart(Rsi, 800,250)
 
+st.write("The indicator has an upper line, typically at 70, a lower line at 30, and a dashed mid-line at 50.")
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 
