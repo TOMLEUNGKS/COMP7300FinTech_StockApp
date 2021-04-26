@@ -5,6 +5,7 @@ import yfinance as yf
 from prophet import Prophet
 from prophet.plot import plot_plotly
 from plotly import graph_objs as go
+import plotly.express as px
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -15,15 +16,18 @@ col1, col2 = st.beta_columns(2)
 START = "2015-01-01"
 TODAY = date.today().strftime("%Y-%m-%d")
 
-st.title('Stock Forecast App')
+st.title('HK Stock Analysis Web-App')
+
+# # # # # # Disclaimer # # # # # 
 st.write('Disclaimer: ')
 st.write('You expressly agree that the use of this app/website is at your sole risk.')
-selected_stock = st.text_input('Select dataset for prediction',"0005.HK")
 
-n_days = st.slider('Days of prediction:', 30, 120, 30,30)
-period = n_days
+st.write("The content of this webpage is not an investment advice and does not constitute any offer or solicitation to offer or recommendation of any investment product. It is for general purposes only and does not take into account your individual needs, investment objectives and specific financial circumstances. Investment involves risk.")
 
+# # # # # # input box for stock number # # # # # 
+selected_stock = st.text_input('Select Stock Number for Analysis and Prediction',"0001.HK")
 
+# # # # # # Download Data # # # # # 
 @st.cache
 def load_data(ticker):
     data = yf.download(ticker, START, TODAY)
@@ -33,7 +37,7 @@ def load_data(ticker):
 data = load_data(selected_stock)
 
 
-# Plot raw data
+# # # # # # Chart of Stock # # # # # 
 def plot_raw_data(selected_stock):
 	fig = go.Figure(data=[go.Candlestick(x=data['Date'],
                 	open=data['Open'],
@@ -47,7 +51,40 @@ if not data.empty:
 	plot_raw_data(selected_stock)
 else:
 	st.write('Please input a valid Hong Kong ticker!')
-# Predict forecast with Prophet.
+
+# # # # # # Relative Strength Index (RSI) # # # # # 
+st.write('Relative Strength Index (RSI)')
+RSI_data = data.set_index(pd.DatetimeIndex(data["Date"].values))
+delta = RSI_data["Adj Close"].diff(1)
+delta = delta.dropna()
+"Get the positive Gains (up) and the negative gains (down)"
+up = delta.copy()
+up[up<0]=0
+down = delta.copy()
+down[down>0]=0
+
+time_period = 14
+avg_gain = up.rolling(window=time_period).mean()
+avg_loss = abs(down.rolling(window=time_period).mean())
+
+"calculate RSI"
+Rs = avg_gain / avg_loss
+Rsi = 100.0 - (100.0 / (1.0 + Rs))
+array_length = len(Rsi)
+last_rsi = Rsi[array_length-1]
+
+st.write('The RSI of the last Trading Day is ' + str(round(last_rsi,2)))
+
+st.line_chart(Rsi, 800,250)
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+
+# Predict forecast with Prophet. 
+
+n_days = st.slider('Days of prediction:', 30, 120, 30, 30)
+period = n_days
+
 try:
 	df_train = data[['Date','Close']]
 	df_train = df_train.rename(columns={"Date": "ds", "Close": "y"})
