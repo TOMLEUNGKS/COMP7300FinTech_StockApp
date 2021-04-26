@@ -20,7 +20,7 @@ st.write('Disclaimer: ')
 st.write('You expressly agree that the use of this app/website is at your sole risk.')
 selected_stock = st.text_input('Select dataset for prediction',"0005.HK")
 
-n_days = st.slider('Days of prediction:', 30, 120)
+n_days = st.slider('Days of prediction:', 30, 120, 30,30)
 period = n_days
 
 
