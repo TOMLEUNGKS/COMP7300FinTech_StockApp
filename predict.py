@@ -20,8 +20,8 @@ st.write('Disclaimer: ')
 st.write('You expressly agree that the use of this app/website is at your sole risk.')
 selected_stock = st.text_input('Select dataset for prediction',"0005.HK")
 
-n_years = st.slider('Years of prediction:', 1, 4)
-period = n_years * 365
+n_days = st.slider('Days of prediction:', 30, 120)
+period = n_days
 
 
 @st.cache
@@ -55,7 +55,7 @@ m.fit(df_train)
 future = m.make_future_dataframe(periods=period)
 forecast = m.predict(future)
     
-st.write(f'Forecast plot for {n_years} years')
+st.write(f'Forecast plot for {n_days} days')
 fig1 = plot_plotly(m, forecast)
 
 st.plotly_chart(fig1,use_container_width = True)
