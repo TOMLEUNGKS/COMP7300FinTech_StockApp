@@ -10,6 +10,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import cufflinks as cf
 sns.set_style('whitegrid')
 plt.style.use("fivethirtyeight")
 col1, col2 = st.beta_columns(2)
@@ -28,7 +29,7 @@ st.write("The content of this webpage is not an investment advice and does not c
 selected_stock = st.text_input('Select Stock Number for Analysis and Prediction',"0001.HK")
 
 # # # # # # Download Data # # # # # 
-@st.cache
+@st.cache(allow_output_mutation=True)
 def load_data(ticker):
     data = yf.download(ticker, START, TODAY)
     data.reset_index(inplace=True)
@@ -51,6 +52,13 @@ if not data.empty:
 	plot_raw_data(selected_stock)
 else:
 	st.write('Please input a valid Hong Kong ticker!')
+mov_data = data.set_index(pd.DatetimeIndex(data["Date"].values))
+mov_day = st.selectbox("Enter number of days Moving Average:",
+						(5,20,50,100,200),index=3)
+# # # # # Moving Average # # # # #
+mov_data["mov_avg"] = mov_data['Close'].rolling(window=int(mov_day),min_periods=0).mean()
+str(mov_day), ' Days Moving Average of ', selected_stock
+st.line_chart(mov_data[["mov_avg","Close"]])
 
 # # # # # # Relative Strength Index (RSI) # # # # # 
 st.write('Relative Strength Index (RSI)')
@@ -75,7 +83,7 @@ last_rsi = Rsi[array_length-1]
 
 st.write('The RSI of the last Trading Day is ' + str(round(last_rsi,2)))
 
-st.line_chart(Rsi, 800,250)
+st.line_chart(Rsi, 800,250,use_container_width = True)
 
 st.write("The indicator has an upper line, typically at 70, a lower line at 30, and a dashed mid-line at 50.")
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
