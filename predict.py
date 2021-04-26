@@ -26,7 +26,7 @@ st.write('You expressly agree that the use of this app/website is at your sole r
 st.write("The content of this webpage is not an investment advice and does not constitute any offer or solicitation to offer or recommendation of any investment product. It is for general purposes only and does not take into account your individual needs, investment objectives and specific financial circumstances. Investment involves risk.")
 
 # # # # # # input box for stock number # # # # # 
-selected_stock = st.text_input('Select Stock Number for Analysis and Prediction',"0001.HK")
+selected_stock = st.text_input('Select Stock Number for Analysis and Prediction',"0010.HK")
 
 # # # # # # Download Data # # # # # 
 @st.cache(allow_output_mutation=True)
@@ -36,7 +36,7 @@ def load_data(ticker):
     return data
 
 data = load_data(selected_stock)
-
+name = yf.Ticker(selected_stock)
 
 # # # # # # Chart of Stock # # # # # 
 def plot_raw_data(selected_stock):
@@ -45,7 +45,7 @@ def plot_raw_data(selected_stock):
                 	high=data['High'],
                 	low=data['Low'],
                 	close=data['Close'])])
-	fig.layout.update(title_text=selected_stock, xaxis_rangeslider_visible=True)
+	fig.layout.update(title_text=selected_stock+" "+name.info['longName'], xaxis_rangeslider_visible=True)
 	st.plotly_chart(fig)
 
 if not data.empty:
@@ -103,13 +103,13 @@ try:
 	future = m.make_future_dataframe(periods=period)
 	forecast = m.predict(future)
     
-	st.write(f'Forecast plot for {n_days} days')
+	st.write(f'Forecast of {selected_stock} plot for {n_days} days')
 	fig1 = plot_plotly(m, forecast)
 
 	st.plotly_chart(fig1,use_container_width = True)
 except:
 	pass
-
+print(name.info['longName'])
 
 
 
