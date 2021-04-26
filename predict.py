@@ -43,23 +43,26 @@ def plot_raw_data(selected_stock):
 	fig.layout.update(title_text=selected_stock, xaxis_rangeslider_visible=True)
 	st.plotly_chart(fig)
 
-
-plot_raw_data(selected_stock)
-
+if not data.empty:
+	plot_raw_data(selected_stock)
+else:
+	st.write('Please input a valid Hong Kong ticker!')
 # Predict forecast with Prophet.
-df_train = data[['Date','Close']]
-df_train = df_train.rename(columns={"Date": "ds", "Close": "y"})
+try:
+	df_train = data[['Date','Close']]
+	df_train = df_train.rename(columns={"Date": "ds", "Close": "y"})
 
-m = Prophet()
-m.fit(df_train)
-future = m.make_future_dataframe(periods=period)
-forecast = m.predict(future)
+	m = Prophet()
+	m.fit(df_train)
+	future = m.make_future_dataframe(periods=period)
+	forecast = m.predict(future)
     
-st.write(f'Forecast plot for {n_days} days')
-fig1 = plot_plotly(m, forecast)
+	st.write(f'Forecast plot for {n_days} days')
+	fig1 = plot_plotly(m, forecast)
 
-st.plotly_chart(fig1,use_container_width = True)
-
+	st.plotly_chart(fig1,use_container_width = True)
+except:
+	pass
 
 
 
