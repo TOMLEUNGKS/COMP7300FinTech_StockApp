@@ -109,7 +109,7 @@ try:
 	st.plotly_chart(fig1,use_container_width = True)
 except:
 	pass
-print(name.info['longName'])
+
 
 
 
