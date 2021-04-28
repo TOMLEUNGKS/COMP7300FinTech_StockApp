@@ -37,6 +37,15 @@ def load_data(ticker):
 
 data = load_data(selected_stock)
 name = yf.Ticker(selected_stock)
+info = yf.Ticker(selected_stock).info
+st.write("Company Name : " + info["longName"])
+st.write("Market Sector : " + info["sector"])
+st.write("Company website : " + info["website"])
+st.write("Previous Closing Price : " + str(info["previousClose"]))
+st.write("Regular Market Day High : " + str(info["regularMarketDayHigh"]))
+st.write("52 Weeks Change :" + str(info["52WeekChange"]))
+st.write("Quarterly Revenue Growth : " + str(info["earningsQuarterlyGrowth"]))
+st.write("Enterprise-Value-to-Revenue : " + str(info["enterpriseToRevenue"]))
 
 # # # # # # Chart of Stock # # # # # 
 def plot_raw_data(selected_stock):
@@ -52,6 +61,8 @@ if not data.empty:
 	plot_raw_data(selected_stock)
 else:
 	st.write('Please input a valid Hong Kong ticker!')
+
+	
 mov_data = data.set_index(pd.DatetimeIndex(data["Date"].values))
 mov_day = st.selectbox("Enter number of days Moving Average:",
 						(5,20,50,100,200),index=3)
@@ -59,6 +70,7 @@ mov_day = st.selectbox("Enter number of days Moving Average:",
 mov_data["mov_avg"] = mov_data['Close'].rolling(window=int(mov_day),min_periods=0).mean()
 str(mov_day), ' Days Moving Average of ', selected_stock
 st.line_chart(mov_data[["mov_avg","Close"]])
+
 
 # # # # # # Relative Strength Index (RSI) # # # # # 
 st.header('Relative Strength Index (RSI)')
@@ -112,5 +124,36 @@ except:
 
 
 
+# # # # # # # # # # comparing the stock with others# # # # # # # # # # # # # # # # # #
+st.header("Fundamental Analysis")
+compare_stock = st.text_input('Select Stock that you wish to compare with',"0005.HK")
+tickers = [selected_stock, compare_stock]
+c_info = yf.Ticker(compare_stock).info
+compare_info = []
+compare_info.append(c_info)
+compare_info.append(info)
+
+st.write("Comparing **" + info["longName"] + "** with **" + c_info["longName"] + "**")
+
+fundanentals = ["trailingAnnualDividendYield", "marketCap", "beta", "forwardPE"]
+df = pd.DataFrame(compare_info)
+df = df.set_index('shortName')
+df = df.transpose()
+st.write(df)
+st.write(df.iloc[16, :])
 
 
+st.write("Trailing Dividend Yield")
+
+st.bar_chart(df.iloc[:, 16], 1000,250,use_container_width = True)
+
+st.write("Market Capitalization")
+st.bar_chart(df.marketCap.transpose(), 1000,250,use_container_width = True)
+
+st.write("Beta")
+st.bar_chart(df.beta, 1000,250,use_container_width = True)
+
+st.write("Forward price-to-earnings (P/E) ratio")
+st.bar_chart(df.forwardPE, 1000,250,use_container_width = True)
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
