@@ -38,6 +38,8 @@ def load_data(ticker):
 data = load_data(selected_stock)
 name = yf.Ticker(selected_stock)
 info = yf.Ticker(selected_stock).info
+
+ # # # # # # # # # #basic information # # # # # # # # # #
 st.write("Company Name : " + info["longName"])
 st.write("Market Sector : " + info["sector"])
 st.write("Company website : " + info["website"])
@@ -62,15 +64,18 @@ if not data.empty:
 else:
 	st.write('Please input a valid Hong Kong ticker!')
 
-	
+
+
+# # # # # # # # # Moving Average # # # # # # # # #
+st.header("Moving Average ")
 mov_data = data.set_index(pd.DatetimeIndex(data["Date"].values))
 mov_day = st.selectbox("Enter number of days Moving Average:",
 						(5,20,50,100,200),index=3)
-# # # # # Moving Average # # # # #
+
 mov_data["mov_avg"] = mov_data['Close'].rolling(window=int(mov_day),min_periods=0).mean()
 str(mov_day), ' Days Moving Average of ', selected_stock
 st.line_chart(mov_data[["mov_avg","Close"]])
-
+# # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 # # # # # # Relative Strength Index (RSI) # # # # # 
 st.header('Relative Strength Index (RSI)')
@@ -101,7 +106,7 @@ st.write("The indicator has an upper line, typically at 70, a lower line at 30, 
 # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 
-# Predict forecast with Prophet. 
+# # # # # # # # # # # # # Predict forecast with Prophet. # # # # # # # # # # # # # 
 st.header("Prophet Prediction Model")
 n_days = st.slider('Days of prediction:', 30, 120, 30, 30)
 period = n_days
@@ -121,7 +126,7 @@ try:
 	st.plotly_chart(fig1,use_container_width = True)
 except:
 	pass
-
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 
 # # # # # # # # # # comparing the stock with others# # # # # # # # # # # # # # # # # #
@@ -138,14 +143,9 @@ st.write("Comparing **" + info["longName"] + "** with **" + c_info["longName"] +
 fundanentals = ["trailingAnnualDividendYield", "marketCap", "beta", "forwardPE"]
 df = pd.DataFrame(compare_info)
 df = df.set_index('shortName')
-df = df.transpose()
-st.write(df)
-st.write(df.iloc[16, :])
-
 
 st.write("Trailing Dividend Yield")
-
-st.bar_chart(df.iloc[:, 16], 1000,250,use_container_width = True)
+st.bar_chart(df.trailingAnnualDividendYield, 1000,250,use_container_width = True)
 
 st.write("Market Capitalization")
 st.bar_chart(df.marketCap.transpose(), 1000,250,use_container_width = True)
@@ -157,3 +157,4 @@ st.write("Forward price-to-earnings (P/E) ratio")
 st.bar_chart(df.forwardPE, 1000,250,use_container_width = True)
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
