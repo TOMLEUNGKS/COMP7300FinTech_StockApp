@@ -20,7 +20,7 @@ TODAY = date.today().strftime("%Y-%m-%d")
 st.title('HK Stock Analysis Web-App')
 
 # # # # # # Disclaimer # # # # # 
-st.write('Disclaimer: ')
+st.header('Disclaimer: ')
 st.write('You expressly agree that the use of this app/website is at your sole risk.')
 
 st.write("The content of this webpage is not an investment advice and does not constitute any offer or solicitation to offer or recommendation of any investment product. It is for general purposes only and does not take into account your individual needs, investment objectives and specific financial circumstances. Investment involves risk.")
@@ -61,7 +61,7 @@ str(mov_day), ' Days Moving Average of ', selected_stock
 st.line_chart(mov_data[["mov_avg","Close"]])
 
 # # # # # # Relative Strength Index (RSI) # # # # # 
-st.write('Relative Strength Index (RSI)')
+st.header('Relative Strength Index (RSI)')
 RSI_data = data.set_index(pd.DatetimeIndex(data["Date"].values))
 delta = RSI_data["Adj Close"].diff(1)
 delta = delta.dropna()
@@ -90,7 +90,7 @@ st.write("The indicator has an upper line, typically at 70, a lower line at 30, 
 
 
 # Predict forecast with Prophet. 
-
+st.header("Prophet Prediction Model")
 n_days = st.slider('Days of prediction:', 30, 120, 30, 30)
 period = n_days
 
