@@ -7,3 +7,6 @@ numpy
 matplotlib
 seaborn 
 cufflinks
+keras 
+sklearn
+tensorflow
