@@ -10,3 +10,4 @@ cufflinks
 keras 
 sklearn
 tensorflow
+pandas_datareader
