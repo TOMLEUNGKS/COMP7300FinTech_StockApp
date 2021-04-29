@@ -72,6 +72,19 @@ if not data.empty:
 else:
 	st.write('Please input a valid Hong Kong ticker!')
 
+# # # # # # # # # Moving Average # # # # # # # # #
+try:
+	st.header("Moving Average ")
+	mov_data = data.set_index(pd.DatetimeIndex(data["Date"].values))
+	mov_day = st.selectbox("Enter number of days Moving Average:",
+						(5,20,50,100,200),index=3)
+
+	mov_data["mov_avg"] = mov_data['Close'].rolling(window=int(mov_day),min_periods=0).mean()
+	str(mov_day), ' Days Moving Average of ', selected_stock
+	st.line_chart(mov_data[["mov_avg","Close"]])
+except: 
+	pass
+# # # # # # # # # # # # # # # # # # # # # # # # # # 
 # # # # # # # # # # comparing the stock with others# # # # # # # # # # # # # # # # # #
 try:
 	st.header("Fundamental Analysis")
@@ -103,19 +116,7 @@ except:
 	pass
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
-# # # # # # # # # Moving Average # # # # # # # # #
-try:
-	st.header("Moving Average ")
-	mov_data = data.set_index(pd.DatetimeIndex(data["Date"].values))
-	mov_day = st.selectbox("Enter number of days Moving Average:",
-						(5,20,50,100,200),index=3)
 
-	mov_data["mov_avg"] = mov_data['Close'].rolling(window=int(mov_day),min_periods=0).mean()
-	str(mov_day), ' Days Moving Average of ', selected_stock
-	st.line_chart(mov_data[["mov_avg","Close"]])
-except: 
-	pass
-# # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 # # # # # # Relative Strength Index (RSI) # # # # # 
 
