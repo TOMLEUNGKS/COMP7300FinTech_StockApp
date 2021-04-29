@@ -264,8 +264,8 @@ try:
 
 
 	# Visualize the data
+	st.write(f'Forecast of {selected_stock} using LSTM')
 	plt.figure(figsize=(16,8))
-	plt.title('Model')
 	plt.xlabel('Date', fontsize=18)
 	plt.ylabel('Close Price HKD ($)', fontsize=18)
 	plt.plot(train['Close'])
