@@ -72,7 +72,36 @@ if not data.empty:
 else:
 	st.write('Please input a valid Hong Kong ticker!')
 
+# # # # # # # # # # comparing the stock with others# # # # # # # # # # # # # # # # # #
+try:
+	st.header("Fundamental Analysis")
+	compare_stock = st.text_input('Select Stock that you wish to compare with',"0005.HK")
+	tickers = [selected_stock, compare_stock]
+	c_info = yf.Ticker(compare_stock).info
+	compare_info = []
+	compare_info.append(c_info)
+	compare_info.append(info)
 
+	st.write("Comparing **" + info["longName"] + "** with **" + c_info["longName"] + "**")
+
+	fundanentals = ["trailingAnnualDividendYield", "marketCap", "beta", "forwardPE"]
+	df = pd.DataFrame(compare_info)
+	df = df.set_index('shortName')
+
+	st.write("Trailing Dividend Yield")
+	st.bar_chart(df.trailingAnnualDividendYield, 1000,250,use_container_width = True)
+
+	st.write("Market Capitalization")
+	st.bar_chart(df.marketCap.transpose(), 1000,250,use_container_width = True)
+
+	st.write("Beta")
+	st.bar_chart(df.beta, 1000,250,use_container_width = True)
+
+	st.write("Forward price-to-earnings (P/E) ratio")
+	st.bar_chart(df.forwardPE, 1000,250,use_container_width = True)
+except:
+	pass
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 # # # # # # # # # Moving Average # # # # # # # # #
 try:
@@ -145,40 +174,10 @@ except:
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 
-# # # # # # # # # # comparing the stock with others# # # # # # # # # # # # # # # # # #
-try:
-	st.header("Fundamental Analysis")
-	compare_stock = st.text_input('Select Stock that you wish to compare with',"0005.HK")
-	tickers = [selected_stock, compare_stock]
-	c_info = yf.Ticker(compare_stock).info
-	compare_info = []
-	compare_info.append(c_info)
-	compare_info.append(info)
-
-	st.write("Comparing **" + info["longName"] + "** with **" + c_info["longName"] + "**")
-
-	fundanentals = ["trailingAnnualDividendYield", "marketCap", "beta", "forwardPE"]
-	df = pd.DataFrame(compare_info)
-	df = df.set_index('shortName')
-
-	st.write("Trailing Dividend Yield")
-	st.bar_chart(df.trailingAnnualDividendYield, 1000,250,use_container_width = True)
-
-	st.write("Market Capitalization")
-	st.bar_chart(df.marketCap.transpose(), 1000,250,use_container_width = True)
-
-	st.write("Beta")
-	st.bar_chart(df.beta, 1000,250,use_container_width = True)
-
-	st.write("Forward price-to-earnings (P/E) ratio")
-	st.bar_chart(df.forwardPE, 1000,250,use_container_width = True)
-except:
-	pass
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 
 # # # # # # # # # # # # # # # # Prediction using LSTM# # # # # # # # # # # # # # # # # 
 st.header("Prediction with Long Short-term Memory (LSTM)")
-
+st.write(" ")
 # Create a new dataframe with only the 'Close column 
 LSTM_df = DataReader(selected_stock, data_source='yahoo', start='2019-03-01', end=datetime.now())
 LSTM_data = LSTM_df.filter(['Close'])
